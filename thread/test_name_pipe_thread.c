@@ -1,15 +1,17 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include<unistd.h>
 #include<fcntl.h>
 #include<string.h>
 #include<sys/wait.h>
 #include<signal.h>
+#include<pthread.h>
 //#include<bits/sigaction.h>
 #define MSG_MAX_SIZE 100
 char *cp_name="/tmp/sw_test.pipe";
 char *sp_name="/tmp/sr_test.pipe";
 
-void handle_msg(){
+void* handle_msg(){
 	if(access(cp_name,R_OK)<0){
 		perror("read client pipe file error");
 		return;
@@ -32,7 +34,12 @@ void handle_msg(){
 	close(fd);
 }
 
-void send_msg(){
+void* send_msg(void* arg){
+	char **argv=(char **)arg;
+	int argc=atoi(*argv++);
+	while (argc--)
+		printf("start send msg arg is : %s\n",*argv++);
+	
 	if(access(sp_name,W_OK)<0 && mkfifo(sp_name,O_CREAT|O_EXCL)<0){
 		perror("create pipe file error");
 		return ;
@@ -53,29 +60,22 @@ void send_msg(){
 	close(fd);
 }
 
-void wait_child(int signo){
-	
-	int statu;
-	pid_t pid=waitpid(0,&statu,0);	
-	printf("child process pid:%d has exit,clear it,status=%d",pid,statu);
-}
-
 int main(int argc,char **argv){
 
-	// child process handle msg
-	pid_t pid=fork();
-	if(pid<0){
-		perror("fork son process error!!");
-	}else if(pid==0){
-		handle_msg();
-	}else{
-		struct sigaction new_act,old_act;
-		new_act.sa_handler=wait_child;
-		sigemptyset(&new_act.sa_mask);
-		new_act.sa_flags=0;
-		sigaction(SIGCHLD,&new_act,&old_act);
-		//pause();
-		send_msg();
+	pthread_t handle_t,send_t;
+	if(pthread_create(&handle_t,NULL,handle_msg,NULL)<0){
+		perror("create handle msg thread error");
+		return 1;
 	}
+	char *arg[3];
+	arg[0]="2";
+	arg[1]="dd";
+	arg[2]="ee";
+	if(pthread_create(&send_t,NULL,send_msg,arg)<0){
+		perror("create send msg thread error");
+		return 1;
+	}
+	pthread_join(handle_t,NULL);
+	pthread_join(send_t,NULL);
 	return 0;
 }
