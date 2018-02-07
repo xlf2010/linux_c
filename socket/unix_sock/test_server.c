@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<unistd.h>
 #include<sys/un.h>
+#include<sys/stat.h>
 #include<arpa/inet.h>
 #include<sys/socket.h>
 #include<string.h>
@@ -11,6 +12,8 @@ typedef struct{
 	int fd;
 	struct sockaddr_in *addr;
 }msg_arg;
+
+char *sock_name="/tmp/test_unix_sock.sock";
 
 void* write_msg(void* arg){
 	msg_arg *msg=(msg_arg *)arg;
@@ -63,11 +66,14 @@ int main(int argc,char **argv){
 		perror("create socket fd error");
 		return 1;
 	}
+	
+	unlink(sock_name);
+
 	memset(&server_addr,0,sizeof(server_addr));
 	server_addr.sun_family=AF_UNIX;
-	strcpy(server_addr.sun_path,/tmp/test_unix_sock);
+	strcpy(server_addr.sun_path,"/tmp/test_unix_sock");
 
-	int bind_res=bind(listenfd,(struct sockaddr *)&server_addr,sizeof(server_addr));
+	int bind_res=bind(listenfd,(struct sockaddr *)&server_addr,SUN_LEN(&server_addr));
 	if(bind_res<0){
 		perror("bind fd error");
 		return 2;
@@ -78,9 +84,17 @@ int main(int argc,char **argv){
 	}
 //	char *msg="got it";
 	while(1){	
-		struct sockaddr_in client_addr;
+		struct sockaddr_un client_addr;
+		struct stat statbuf;
 		int addrlen = sizeof(client_addr);
 		int connfd=accept(listenfd,(struct sockaddr *)&client_addr,&addrlen);
+		if(stat(client_addr.sun_path,&statbuf)<0){
+			return 4;
+		}
+		if(S_ISSOCK(statbuf.st_mode)==0){
+			return 5;
+		}
+	
 		msg_arg arg;
 		arg.fd=connfd;
 		arg.addr=&client_addr;
