@@ -1,6 +1,5 @@
 #include<stdio.h>
 #include<unistd.h>
-
 #include<sys/socket.h>
 #include<arpa/inet.h>
 #include<netinet/in.h>
@@ -27,7 +26,6 @@ int main(int argc,char **argv){
 	memset(msg,'\0',sizeof(msg));
 	while(read(STDIN_FILENO,msg,MSG_MAX_LEN)){
 		int i=0;
-//		for(i=0;i<strlen(msg);i++) printf("%d ",msg[i]);
 		write(sockfd,msg,strlen(msg));
 		if(strcmp(msg,"bye\n")==0) break;
 		memset(msg,'\0',sizeof(msg));

@@ -3,8 +3,6 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<sys/socket.h>
-//#include<unistd.h>
-//#include<fcntl.h>
 #include<string.h>
 #include<errno.h>
 #define MAX_BUF 100
@@ -30,14 +28,11 @@ void* handle_msg(void* arg){
 	char buf[MAX_BUF];
 	int fd=msg->fd;
 	int finished=0;
-//	int flag=fcntl(fd,F_GETFL);
-//	fcntl(fd,F_SETFL,flag|O_NONBLOCK);
 	while(finished==0){
 		memset(buf,'\0',sizeof(buf));
 		printf("client ip : %s,port:%d,say:\"",inet_ntoa(msg->addr->sin_addr),ntohs(msg->addr->sin_port));
 		int n=-1;
 		while((n=read(fd,buf,MAX_BUF))){
-//			printf("n=%d,msg=%s",n,buf);
 			if(n==-1){
 				perror(strerror(errno));
 				finished=1;
@@ -71,7 +66,6 @@ int main(int argc,char **argv){
 	memset(&server_addr,0,sizeof(server_addr));
 	server_addr.sin_family=AF_INET;
 	server_addr.sin_port=htons(SERVER_PORT);
-//	server_addr.sin_addr.s_addr=inet_addr("10.0.2.15");
 
 	int bind_res=bind(listenfd,(struct sockaddr *)&server_addr,sizeof(server_addr));
 	if(bind_res<0){
@@ -82,7 +76,6 @@ int main(int argc,char **argv){
 		perror("listening error");
 		return 3;
 	}
-//	char *msg="got it";
 	while(1){	
 		struct sockaddr_in client_addr;
 		int addrlen = sizeof(client_addr);
@@ -96,15 +89,6 @@ int main(int argc,char **argv){
 			continue;
 		}
 		pthread_detach(tid);
-		//printf("connected , client ip:%s,port:%d\n",inet_ntoa(client_addr.sin_addr),ntohs(client_addr.sin_port));
-		//int n=0;
-		//printf("read from client : ");
-		//while(n=read(connfd,buf,MAX_BUF)){
-		//	printf("%s",buf);
-		//}
-		//printf("\n");
-		//write(connfd,msg,strlen(msg));
-		//close(connfd);
 	}
 
 	return 0;
