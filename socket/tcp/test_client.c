@@ -7,7 +7,7 @@
 
 #define MSG_MAX_LEN 100
 #define SERVER_IP "10.0.2.15"
-#define SERVER_PORT 80
+#define SERVER_PORT 8088
 
 int main(int argc,char **argv){
 	char msg[MSG_MAX_LEN];

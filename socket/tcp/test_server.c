@@ -6,7 +6,7 @@
 #include<string.h>
 #include<errno.h>
 #define MAX_BUF 100
-#define SERVER_PORT 80
+#define SERVER_PORT 8088
 typedef struct{
 	int fd;
 	struct sockaddr_in *addr;
@@ -93,3 +93,4 @@ int main(int argc,char **argv){
 
 	return 0;
 
+}
