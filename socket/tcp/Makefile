@@ -8,6 +8,12 @@ teset_server.o: teset_server.c
 teset_client.o: teset_client.c
 	cc -c -g teset_client.c -o teset_client.o
 
+epoll:test_epoll.o
+	cc -g test_epoll.o -o test_epoll.e
+
+test_epoll.o:test_epoll.c
+	cc -c -g test_epoll.c -o test_epoll.o
+
 clean:
 	@echo "cleaning project"
 	-rm *.e *.o
