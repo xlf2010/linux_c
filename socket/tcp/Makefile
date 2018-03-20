@@ -1,18 +1,18 @@
 main: test_server.o test_client.o
-	cc -g test_server.o -o test_server.e -lpthread
-	cc -g test_client.o -o test_client.e -lpthread
+	cc -Wall -g test_server.o -o test_server.e -lpthread
+	cc -Wall -g test_client.o -o test_client.e -lpthread
 
 teset_server.o: teset_server.c
-	cc -c -g teset_server.c -o test_server.o
+	cc -Wall -c -g teset_server.c -o test_server.o
 
 teset_client.o: teset_client.c
-	cc -c -g teset_client.c -o teset_client.o
+	cc -Wall -c -g teset_client.c -o teset_client.o
 
 epoll:test_epoll.o
-	cc -g test_epoll.o -o test_epoll.e
+	cc -Wall -g test_epoll.o -o test_epoll.e
 
 test_epoll.o:test_epoll.c
-	cc -c -g test_epoll.c -o test_epoll.o
+	cc -Wall -c -g test_epoll.c -o test_epoll.o
 
 clean:
 	@echo "cleaning project"

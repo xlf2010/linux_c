@@ -7,7 +7,20 @@
 
 #define MSG_MAX_LEN 100
 #define SERVER_IP "10.0.2.15"
-#define SERVER_PORT 8088
+#define SERVER_PORT 80
+
+void read_msg(void *arg){
+	int fd=*(int *)arg;
+	char msg[MSG_MAX_LEN];
+	int size=sizeof(msg);
+	while(1){
+		int len=read(fd,msg,size);
+		if(len==0){
+			printf("socket close,");
+			break;
+		}
+	}
+}
 
 int main(int argc,char **argv){
 	char msg[MSG_MAX_LEN];
@@ -26,9 +39,13 @@ int main(int argc,char **argv){
 	memset(msg,'\0',sizeof(msg));
 	while(read(STDIN_FILENO,msg,MSG_MAX_LEN)){
 		int i=0;
+//		write(sockfd,msg,strlen(msg));
+		if(strcmp(msg,"bye\n")==0) {
+			break;
+		}
 		write(sockfd,msg,strlen(msg));
-		if(strcmp(msg,"bye\n")==0) break;
 		memset(msg,'\0',sizeof(msg));
 	}
 	close(sockfd);
+	sleep(4);
 }
