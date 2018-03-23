@@ -1,5 +1,7 @@
-main: test_server.o test_client.o
+server: test_server.o
 	cc -Wall -g test_server.o -o test_server.e -lpthread
+
+client:test_client.o
 	cc -Wall -g test_client.o -o test_client.e -lpthread
 
 teset_server.o: teset_server.c

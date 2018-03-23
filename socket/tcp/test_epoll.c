@@ -12,7 +12,7 @@
 #define MAX_CONNECTIONS 20
 
 #define MAX_FD_LISTEN 1024
-#define EPOLL_WAIT_TIMEOUT 10 * 1000
+#define EPOLL_WAIT_TIMEOUT -1
 
 #define MAX_BUF 100
 
@@ -20,8 +20,6 @@ void print_error(const char * msg,int errno){
 	printf("%s:%s\n",msg,strerror(errno));
 	exit(1);
 }
-
-void handle_active_fd_in(){}
 
 void handle_active_fds(int epoll_fd,int listenedfd,struct epoll_event* event){	
 	if(event->events & EPOLLIN){
